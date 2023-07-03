@@ -29,6 +29,11 @@ button:hover {
 }
 
 /* Estilos para los tableros */
+.boards-container {
+    display: flex;
+    justify-content: center;
+}
+
 #player-board,
 #ai-board {
     width: 400px;
@@ -36,6 +41,10 @@ button:hover {
     background-color: #ddd;
     margin: 20px auto;
     border-collapse: collapse; /* Para colapsar los bordes de las celdas */
+}
+
+.ai-board {
+    margin-left: 40px; /* Ajusta el margen izquierdo para separar las tablas */
 }
   
 #player-board h2, #ai-board h2 {

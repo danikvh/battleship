@@ -13,23 +13,20 @@ export default function gameLoop() {
     const computer = new PlayerAI(computerGameboard);
 
     // Populate gameboards with predetermined ship coordinates
-    const playerShip1 = new Ship(3, [[3,2],[3,3],[3,4]])
-    const playerShip2 = new Ship(4, [[2,2],[2,3],[2,4],[2,5]])
-    const playerShip3 = new Ship(4, [[6,2],[6,3],[6,4],[6,5]])
-    const playerShip4 = new Ship(5, [[5,3],[5,4],[5,5],[5,6],[5,7]])
-    playerGameboard.placeShip(playerShip1)
-    playerGameboard.placeShip(playerShip2)
-    playerGameboard.placeShip(playerShip3)
-    playerGameboard.placeShip(playerShip4)
-
-    const computerShip1 = new Ship(3, [[3,2],[3,3],[3,4]])
-    const computerShip2 = new Ship(4, [[2,2],[2,3],[2,4],[2,5]])
-    const computerShip3 = new Ship(4, [[6,2],[6,3],[6,4],[6,5]])
-    const computerShip4 = new Ship(5, [[5,3],[5,4],[5,5],[5,6],[5,7]])
-    computerGameboard.placeShip(computerShip1)
-    computerGameboard.placeShip(computerShip2)
-    computerGameboard.placeShip(computerShip3)
-    computerGameboard.placeShip(computerShip4)
+    const defaultShipsData = [
+        { length: 3, coordinates: [[3, 2], [3, 3], [3, 4]] },
+        { length: 4, coordinates: [[2, 2], [2, 3], [2, 4], [2, 5]] },
+        { length: 4, coordinates: [[6, 2], [6, 3], [6, 4], [6, 5]] },
+        { length: 5, coordinates: [[5, 3], [5, 4], [5, 5], [5, 6], [5, 7]] },
+    ];
+    defaultShipsData.forEach((shipData) => {
+        const ship = new Ship(shipData.length, shipData.coordinates);
+        playerGameboard.placeShip(ship);
+    });
+    defaultShipsData.forEach((shipData) => {
+        const ship = new Ship(shipData.length, shipData.coordinates);
+        computerGameboard.placeShip(ship);
+    });
 
 
     // Iniciar el juego llamando a la función de inicialización en domInteraction.js
