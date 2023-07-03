@@ -20,5 +20,6 @@ export default class Gameboard {
         coordinates.forEach(([x, y]) => {
             this.board[x][y] = { hasShip: true, isShot: false };
         });
+        this.ships.push(ship)
     }
 }
