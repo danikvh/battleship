@@ -50,6 +50,20 @@ function generateGameboardHTML(boardElement, gameboard) {
     }
 }
 
+export function updatePlayerBoard(cellCoords, result, board) {
+    const [row, col] = cellCoords;
+    const cells = document.querySelectorAll('#player-board td');
+    const cellIndex = row * 10 + col;
+    const cell = cells[cellIndex];
+    console.log(cell)
+    if (result === 'Hit') {
+        cell.style.backgroundColor = 'red'; // Actualizar celda a color rojo en caso de impacto en un barco
+    } else if (result === 'No hit') {
+        cell.style.backgroundColor = 'gray'; // Actualizar celda a color gris en caso de impacto en el agua
+    }
+}
+
+
 export function getPlayerAttackCoordsAsync() {
     return new Promise(resolve => {
         const interval = setInterval(() => {

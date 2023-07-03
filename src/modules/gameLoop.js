@@ -3,7 +3,7 @@ import Ship from "../factories/Ship";
 import Gameboard from "../factories/Gameboard"
 import Player from "../factories/Player"
 import PlayerAI from "../factories/PlayerAI"
-import { initializeGame, getPlayerAttackCoordsAsync } from "./domInteraction";
+import { initializeGame, getPlayerAttackCoordsAsync, updatePlayerBoard } from "./domInteraction";
 
 //Variables
 let isGameActive = false;
@@ -45,14 +45,17 @@ async function gameLoop() {
     while (!gameOver() && isGameActive) {
         // Player's turn
         let playerAttackCoords = await getPlayerAttackCoordsAsync(); // Esperar hasta obtener las coordenadas de ataque del jugador
-        console.log(playerAttackCoords)
         const playerAttackResult = computerGameboard.receiveAttack(playerAttackCoords);
         // Update UI to reflect the attack result
 
         // Computer's turn
-        const computerAttackCoords = getComputerAttackCoords(); // Generate random attack coordinates
+        let computerAttackCoords = computer.generateAttack()
+        while(!computer.isValidMove(computerAttackCoords)) {
+            computerAttackCoords = computer.generateAttack()
+        }
         const computerAttackResult = playerGameboard.receiveAttack(computerAttackCoords);
         // Update UI to reflect the attack result
+        updatePlayerBoard(computerAttackCoords, computerAttackResult, playerGameboard)
     }
 
     // Function to check if the game is over
