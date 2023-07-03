@@ -22,4 +22,31 @@ export default class Gameboard {
         });
         this.ships.push(ship)
     }
+
+    findShipByCoord(coord) {
+        return this.ships.find(ship => {
+            return ship.position.some(pos => {
+                return pos[0] === coord[0] && pos[1] === coord[1];
+            });
+        });
+    }
+
+    receiveAttack(coord) {
+        // Shot position
+        if (this.board[coord[0], coord[1]].isShot) {
+            return "Already shot position"
+        }
+
+        // Not shot position
+        this.board[coord[0]][coord[1]].isShot = true
+        // Ship hit
+        if (this.board[coord[0]][coord[1]].hasShip) {
+            let ship = this.findShipByCoord(coord)
+            ship.hit(coord)
+            return "Hit"
+        // Water hit
+        } else {
+            return "No hit"
+        }
+    }
 }
