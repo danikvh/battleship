@@ -13,20 +13,6 @@ body {
 h1 {
     color: #333;
 }
-  
-#board {
-    width: 400px;
-    height: 400px;
-    background-color: #ddd;
-    margin: 20px auto;
-    border-collapse: collapse; /* Para colapsar los bordes de las celdas */
-}
-  
-#board td {
-    width: 30px; /* Ancho de las celdas */
-    height: 30px; /* Alto de las celdas */
-    border: 1px solid #000; /* Borde de las celdas */
-}
 
 button {
     padding: 10px 20px;
@@ -41,4 +27,37 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+/* Estilos para los tableros */
+#player-board,
+#ai-board {
+    width: 400px;
+    height: 400px;
+    background-color: #ddd;
+    margin: 20px auto;
+    border-collapse: collapse; /* Para colapsar los bordes de las celdas */
+}
   
+#player-board h2, #ai-board h2 {
+    margin-top: 0;
+}
+  
+table {
+    border-collapse: collapse;
+    width: 300px;
+    height: 300px;
+}
+
+td {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #000;
+}
+
+.ship {
+    background-color: #000;
+}
+
+.water {
+    background-color: #c7e1ff;
+}
