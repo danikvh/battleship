@@ -16,7 +16,7 @@ export function initializeGame(playerGameboard, computerGameboard) {
     aiCells.forEach(cell => {
         cell.addEventListener('click', () => {
             if (cell.classList.contains('water'))  {
-                cell.style.backgroundColor = 'gray'
+                cell.style.backgroundColor = '#0759b6'
             }
             cell.classList.remove('hidden'); // Remueve la clase 'hidden' al hacer clic en una celda de la IA
             const row = cell.parentNode.rowIndex;
@@ -61,7 +61,7 @@ export function updatePlayerBoard(cellCoords, result, board) {
     if (result === 'Hit') {
         cell.style.backgroundColor = 'red'; // Actualizar celda a color rojo en caso de impacto en un barco
     } else if (result === 'No hit') {
-        cell.style.backgroundColor = 'gray'; // Actualizar celda a color gris en caso de impacto en el agua
+        cell.style.backgroundColor = '#0759b6'; // Actualizar celda a color gris en caso de impacto en el agua
     }
 }
 
