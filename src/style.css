@@ -63,8 +63,12 @@ td {
     border: 1px solid #000;
 }
 
+.hidden {
+    background-color: #c7e1ff !important;
+}
+
 .ship {
-    background-color: #000;
+    border: 1px solid #000;
 }
 
 .water {

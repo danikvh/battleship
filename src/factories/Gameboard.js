@@ -24,11 +24,12 @@ export default class Gameboard {
     }
 
     findShipByCoord(coord) {
-        return this.ships.find(ship => {
-            return ship.position.some(pos => {
-                return pos[0] === coord[0] && pos[1] === coord[1];
-            });
-        });
+        return this.ships.find(ship => ship.position.some(pos => pos[0] === coord[0] && pos[1] === coord[1]));
+    }
+
+    // Function to get the position of a ship in gameboard.ships based on its coordinates
+    getShipPosition(coord) {
+        return this.ships.findIndex(ship => ship.position.some(pos => pos[0] === coord[0] && pos[1] === coord[1]));
     }
 
     receiveAttack(coord) {
