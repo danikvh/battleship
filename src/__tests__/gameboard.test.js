@@ -10,7 +10,7 @@ beforeEach(() => {
     board.placeShip(ship)
   });
 
-  test('board with boat', () => {
+test('board with boat', () => {
     expect(board.board[2][2].hasShip).toBe(true);
     expect(board.board[2][3].hasShip).toBe(true);
     expect(board.board[2][4].hasShip).toBe(true);
