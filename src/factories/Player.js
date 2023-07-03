@@ -1,13 +1,14 @@
 import Gameboard from './Gameboard';
 
 export default class Player {
-    constructor(gameboard) {
+    constructor(gameboard, enemyGameboard) {
         this.gameboard = gameboard
+        this.enemyGameboard = enemyGameboard
     }
 
-    attackEnemy(player, coord) {
+    attackEnemy(coord) {
         if (this.isValidMove(coord)) {
-            return player.gameboard.receiveAttack(coord)
+            return this.enemyGameboard.receiveAttack(coord)
         } else {
             return "Invalid move"
         }
@@ -15,10 +16,10 @@ export default class Player {
 
     isValidMove(coord) {
         if (coord[0] >= 0 && coord[0] < 10 && coord[1] >= 0 && coord[1] < 10 
-                || !this.board[coord[0]][coord[1]].isShot) {
+                && !this.enemyGameboard.board[coord[0]][coord[1]].isShot) {
             return true
         } else {
             return false
         }
-      }
+    }
 }

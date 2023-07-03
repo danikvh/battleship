@@ -17,8 +17,8 @@ async function gameLoop() {
     // Create players and gameboards
     const playerGameboard = new Gameboard();
     const computerGameboard = new Gameboard();
-    const player = new Player(playerGameboard);
-    const computer = new PlayerAI(computerGameboard);
+    const player = new Player(playerGameboard, computerGameboard);
+    const computer = new PlayerAI(computerGameboard, playerGameboard);
 
     // Populate gameboards with predetermined ship coordinates
     const defaultShipsData = [
@@ -45,15 +45,14 @@ async function gameLoop() {
     while (!gameOver() && isGameActive) {
         // Player's turn
         let playerAttackCoords = await getPlayerAttackCoordsAsync(); // Esperar hasta obtener las coordenadas de ataque del jugador
-        const playerAttackResult = computerGameboard.receiveAttack(playerAttackCoords);
-        // Update UI to reflect the attack result
+        const playerAttackResult = player.attackEnemy(playerAttackCoords);
 
         // Computer's turn
         let computerAttackCoords = computer.generateAttack()
         while(!computer.isValidMove(computerAttackCoords)) {
             computerAttackCoords = computer.generateAttack()
         }
-        const computerAttackResult = playerGameboard.receiveAttack(computerAttackCoords);
+        const computerAttackResult = computer.attackEnemy(computerAttackCoords);
         // Update UI to reflect the attack result
         updatePlayerBoard(computerAttackCoords, computerAttackResult, playerGameboard)
     }

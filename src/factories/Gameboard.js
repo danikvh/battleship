@@ -2,7 +2,13 @@ import Ship from './Ship';
 
 export default class Gameboard {
     constructor() {
-        this.board = Array(10).fill(null).map(() => Array(10).fill({ hasShip: false, isShot: false }))
+        this.board = Array(10).fill(null).map(() => Array(10));
+
+        for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            this.board[i][j] = { hasShip: false, isShot: false };
+          }
+        }
         this.ships = []
     }
 
@@ -33,15 +39,16 @@ export default class Gameboard {
     }
 
     receiveAttack(coord) {
+        const [x, y] = coord;
         // Shot position
-        if (this.board[coord[0], coord[1]].isShot) {
+        if (this.board[x][y].isShot) {
             return "Already shot position"
         }
 
         // Not shot position
-        this.board[coord[0]][coord[1]].isShot = true
+        this.board[x][y].isShot = true
         // Ship hit
-        if (this.board[coord[0]][coord[1]].hasShip) {
+        if (this.board[x][y].hasShip) {
             let ship = this.findShipByCoord(coord)
             ship.hit(coord)
             return "Hit"

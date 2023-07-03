@@ -55,7 +55,6 @@ export function updatePlayerBoard(cellCoords, result, board) {
     const cells = document.querySelectorAll('#player-board td');
     const cellIndex = row * 10 + col;
     const cell = cells[cellIndex];
-    console.log(cell)
     if (result === 'Hit') {
         cell.style.backgroundColor = 'red'; // Actualizar celda a color rojo en caso de impacto en un barco
     } else if (result === 'No hit') {
