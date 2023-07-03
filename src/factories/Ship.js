@@ -6,8 +6,8 @@ export default class Ship {
         this.isSunk = false
     }
 
-    hit(index) {
-        this.hits.push(index)
+    hit(coords) {
+        this.hits.push(coords)
         if (this.hits === this.length) {
             this.isSunk = true
         }

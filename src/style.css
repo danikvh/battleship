@@ -19,6 +19,13 @@ h1 {
     height: 400px;
     background-color: #ddd;
     margin: 20px auto;
+    border-collapse: collapse; /* Para colapsar los bordes de las celdas */
+}
+  
+#board td {
+    width: 30px; /* Ancho de las celdas */
+    height: 30px; /* Alto de las celdas */
+    border: 1px solid #000; /* Borde de las celdas */
 }
 
 button {
