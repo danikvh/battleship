@@ -1,3 +1,5 @@
+let playerAttackCoords = null; // Variable para almacenar las coordenadas de ataque del jugador
+
 export function initializeGame(playerGameboard, computerGameboard) {
     // Render the gameboards on the UI
     // Generar la representación del tablero para el jugador
@@ -14,6 +16,10 @@ export function initializeGame(playerGameboard, computerGameboard) {
     aiCells.forEach(cell => {
         cell.addEventListener('click', () => {
             cell.classList.remove('hidden'); // Remueve la clase 'hidden' al hacer clic en una celda de la IA
+            const row = cell.parentNode.rowIndex;
+            const col = cell.cellIndex;
+            const attackCoords = [row, col];
+            setPlayerAttackCoords(attackCoords); // Almacena las coordenadas de ataque del jugador
         });
     });
 }
@@ -42,4 +48,26 @@ function generateGameboardHTML(boardElement, gameboard) {
         }
         boardElement.querySelector('tbody').appendChild(row);
     }
+}
+
+export function getPlayerAttackCoordsAsync() {
+    return new Promise(resolve => {
+        const interval = setInterval(() => {
+            const playerAttackCoords = getPlayerAttackCoords();
+            if (playerAttackCoords !== null) {
+                clearInterval(interval);
+                resolve(playerAttackCoords);
+            }
+        }, 100); // Intervalo de verificación cada 100 ms (puedes ajustarlo según tus necesidades)
+    });
+}
+
+function getPlayerAttackCoords() {
+    let aux = playerAttackCoords
+    playerAttackCoords = null
+    return aux; // Devuelve las coordenadas de ataque del jugador almacenadas previamente
+}
+
+function setPlayerAttackCoords(coords) {
+    playerAttackCoords = coords; // Almacena las coordenadas de ataque del jugador en la variable playerAttackCoords
 }

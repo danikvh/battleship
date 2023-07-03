@@ -3,9 +3,17 @@ import Ship from "../factories/Ship";
 import Gameboard from "../factories/Gameboard"
 import Player from "../factories/Player"
 import PlayerAI from "../factories/PlayerAI"
-import { initializeGame } from "./domInteraction";
+import { initializeGame, getPlayerAttackCoordsAsync } from "./domInteraction";
 
-export default function gameLoop() {
+//Variables
+let isGameActive = false;
+
+export default function startGame() {
+    isGameActive = true;
+    gameLoop(); // Inicia el bucle del juego
+}
+
+async function gameLoop() {
     // Create players and gameboards
     const playerGameboard = new Gameboard();
     const computerGameboard = new Gameboard();
@@ -32,12 +40,12 @@ export default function gameLoop() {
     // Iniciar el juego llamando a la función de inicialización en domInteraction.js
     initializeGame(playerGameboard, computerGameboard);
 
-    // Add event listeners for attacking
 
     // Implement the game loop
-    while (!gameOver()) {
+    while (!gameOver() && isGameActive) {
         // Player's turn
-        const playerAttackCoords = getPlayerAttackCoords(); // Get attack coordinates from user input
+        let playerAttackCoords = await getPlayerAttackCoordsAsync(); // Esperar hasta obtener las coordenadas de ataque del jugador
+        console.log(playerAttackCoords)
         const playerAttackResult = computerGameboard.receiveAttack(playerAttackCoords);
         // Update UI to reflect the attack result
 
