@@ -15,6 +15,9 @@ export function initializeGame(playerGameboard, computerGameboard) {
     const aiCells = document.querySelectorAll('#ai-board td');
     aiCells.forEach(cell => {
         cell.addEventListener('click', () => {
+            if (cell.classList.contains('water'))  {
+                cell.style.backgroundColor = 'gray'
+            }
             cell.classList.remove('hidden'); // Remueve la clase 'hidden' al hacer clic en una celda de la IA
             const row = cell.parentNode.rowIndex;
             const col = cell.cellIndex;

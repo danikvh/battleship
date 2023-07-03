@@ -45,6 +45,9 @@ async function gameLoop() {
     while (!gameOver() && isGameActive) {
         // Player's turn
         let playerAttackCoords = await getPlayerAttackCoordsAsync(); // Esperar hasta obtener las coordenadas de ataque del jugador
+        while(!player.isValidMove(playerAttackCoords)) {
+            playerAttackCoords = await getPlayerAttackCoordsAsync();
+        }
         const playerAttackResult = player.attackEnemy(playerAttackCoords);
 
         // Computer's turn
