@@ -96,13 +96,12 @@ function showMessage(message) {
 
 function hideMessage() {
     const messageElement = document.getElementById("message");
-    messageElement.classList.add("hidden");
+    messageElement.classList.add("hidden-message");
 }
 
 function resetGameboard() {
     const playerBoardContainer = document.getElementById("player-board");
     const aiBoardContainer = document.getElementById('ai-board');
-    console.log(playerBoardContainer)
 
     // Elimina las gameboards existentes si las hay
     playerBoardContainer.innerHTML = '';

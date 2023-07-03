@@ -50,3 +50,36 @@ test('boat almost sunk', () => {
     board.receiveAttack([2,4])
     expect(board.gameLost()).toBe(false);
 });
+
+describe('Gameboard functions', () => {
+	let testBoard;
+	beforeEach(() => {
+		testBoard = new Gameboard();
+	});
+
+	it('initializes a gameboard with the appropriate amount of cells', () => {
+		const arr = Array(10).fill(null).map(() => Array(10));
+
+        for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            arr[i][j] = { hasShip: false, isShot: false };
+          }
+        }
+		expect(testBoard.board).toEqual(arr);
+	});
+
+	it('updates a cell when receiving a shot', () => {
+		testBoard.receiveAttack([1,0]);
+		expect(testBoard.board[1][0].isShot).toBe(true);
+	});
+
+	it('responds to a miss', () => {
+		expect(testBoard.board[1][0].isShot).toBe(false);
+	});
+
+	it('confirms a hit', () => {
+		ship = new Ship(4, [[1,0],[1,1],[1,2],[1,3]])
+        testBoard.placeShip(ship)
+		expect(testBoard.receiveAttack([1,0])).toBe("Hit");
+	});
+});
