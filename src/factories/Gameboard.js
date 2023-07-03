@@ -49,4 +49,8 @@ export default class Gameboard {
             return "No hit"
         }
     }
+
+    gameLost() {
+        return this.ships.every(ship => ship.isSunk)
+    }
 }

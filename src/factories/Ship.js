@@ -23,7 +23,7 @@ export default class Ship {
 
     hit(coords) {
         this.hits.push(coords)
-        if (this.hits === this.length) {
+        if (this.hits.length === this.length) {
             this.isSunk = true
         }
     }

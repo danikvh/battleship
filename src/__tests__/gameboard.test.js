@@ -35,3 +35,18 @@ test('shoot boat', () => {
 test('shoot failed', () => {
     expect(board.receiveAttack([4,2])).toBe("No hit");
 });
+
+test('boat sunk', () => {
+    board.receiveAttack([2,2]) 
+    board.receiveAttack([2,3])
+    board.receiveAttack([2,4])
+    board.receiveAttack([2,5])
+    expect(board.gameLost()).toBe(true);
+});
+
+test('boat almost sunk', () => {
+    board.receiveAttack([2,2]) 
+    board.receiveAttack([2,3])
+    board.receiveAttack([2,4])
+    expect(board.gameLost()).toBe(false);
+});
