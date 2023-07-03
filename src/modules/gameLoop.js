@@ -9,6 +9,18 @@ import { initializeGame, getPlayerAttackCoordsAsync, updatePlayerBoard } from ".
 let isGameActive = false;
 
 export default function startGame() {
+    // Add listener to start button
+    const startButton = document.getElementById("start-button");
+    startButton.addEventListener("click", () => {
+        // Reinicia el juego y oculta el mensaje
+        resetGameboard();
+        hideMessage();
+
+        // Inicia el bucle de juego
+        gameLoop();
+    });
+
+    // Start the game
     isGameActive = true;
     gameLoop(); // Inicia el bucle del juego
 }
@@ -44,11 +56,12 @@ async function gameLoop() {
     // Implement the game loop
     while (!gameOver() && isGameActive) {
         // Player's turn
-        let playerAttackCoords = await getPlayerAttackCoordsAsync(); // Esperar hasta obtener las coordenadas de ataque del jugador
+        let playerAttackCoords = await getPlayerAttackCoordsAsync(); // Wait until attack coordinates are obtained
         while(!player.isValidMove(playerAttackCoords)) {
             playerAttackCoords = await getPlayerAttackCoordsAsync();
         }
         const playerAttackResult = player.attackEnemy(playerAttackCoords);
+        gameOver()
 
         // Computer's turn
         let computerAttackCoords = computer.generateAttack()
@@ -62,21 +75,38 @@ async function gameLoop() {
 
     // Function to check if the game is over
     function gameOver() {
-        // Check if any player's ships have all been sunk
-        // Return true if game over, false otherwise
+        if (computerGameboard.gameLost()) {
+            showMessage("You Win!");
+            return true
+        }
+        if (playerGameboard.gameLost()) {
+            showMessage("You Lose!"); 
+            return true
+        }
+        return false
     }
+}
 
-    // Function to handle player's attack input
-    function getPlayerAttackCoords() {
-        // Logic to capture player's attack coordinates from user input
-        // Return the attack coordinates
-    }
+function showMessage(message) {
+    const messageElement = document.getElementById("message");
+    const messageTextElement = messageElement.querySelector("h3");
+    messageTextElement.textContent = message;
+    messageElement.classList.remove("hidden-message");
+}
 
-    // Function to generate computer's attack coordinates
-    function getComputerAttackCoords() {
-        // Logic to generate random attack coordinates for the computer
-        // Return the attack coordinates
-    }
+function hideMessage() {
+    const messageElement = document.getElementById("message");
+    messageElement.classList.add("hidden");
+}
 
-    // Other helper functions and code
+function resetGameboard() {
+    const playerBoardContainer = document.getElementById("player-board");
+    const aiBoardContainer = document.getElementById('ai-board');
+    console.log(playerBoardContainer)
+
+    // Elimina las gameboards existentes si las hay
+    playerBoardContainer.innerHTML = '';
+    playerBoardContainer.appendChild(document.createElement('tbody'));
+    aiBoardContainer.innerHTML = '';
+    aiBoardContainer.appendChild(document.createElement('tbody'));
 }

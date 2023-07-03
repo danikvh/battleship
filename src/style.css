@@ -74,3 +74,16 @@ td {
 .water {
     background-color: #c7e1ff;
 }
+
+.hidden-message {
+    display: none;
+}
+
+#message {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#message h3 {
+    font-size: 24px;
+}
