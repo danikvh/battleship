@@ -170,6 +170,7 @@ async function testGame() {
 
 // Variables
 let playerAttackCoords = null; // store the attacked coordinates of the player
+let actualShipSize = 5; // The size of the actual ghost ship being put on the gameboard
 
 // Listeners
 // AI Board cell click, attacking a coordinate
@@ -234,7 +235,6 @@ function resetGame(event) {
  */
 function leftRightArrows(event) {
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-        console.log("RFD")
         switch (ghostDirection) {
             case "R":
                 ghostDirection = event.key === "ArrowLeft" ? "U" : "D";
@@ -249,6 +249,7 @@ function leftRightArrows(event) {
                 ghostDirection = event.key === "ArrowLeft" ? "R" : "L";
                 break;
         }
+        updateGhostShipSize() // Moves the ghost ship according to the new direction
         console.log(ghostDirection);
     }
 }
@@ -406,6 +407,8 @@ function setPlayerAttackCoords(coords) {
  * @param {number} shipSize The size of the ship added
  */
 async function showGhostShip(shipSize) {
+    actualShipSize = shipSize // Update for the rotate function
+
     const shipElement = document.createElement("div");
     shipElement.classList.add("ghost-ship");
     document.body.appendChild(shipElement);
@@ -430,15 +433,21 @@ function drawShipOnCursor (event, shipElement) {
     let x = event.clientX - 15
     let y = event.clientY - 15
     switch (ghostDirection) {
-        case "R" || "U":
+        case "R":
             x = event.clientX - 15
             y = event.clientY - 15
             break;
+        case "U":
+            x = event.clientX - 15
+            y = event.clientY - 15 - actualShipSize * 40 + 40
+            break;
         case "L":
-            ghostDirection = event.key === "ArrowLeft" ? "D" : "U";
+            x = event.clientX - 15 - actualShipSize * 40 + 40
+            y = event.clientY - 15
             break;
         case "D":
-            ghostDirection = event.key === "ArrowLeft" ? "R" : "L";
+            x = event.clientX - 15
+            y = event.clientY - 15
             break;
     }
 
@@ -447,20 +456,22 @@ function drawShipOnCursor (event, shipElement) {
 };
 
 /**
- * Rotates the ghost ship accordingly
+ * Adjusts the ship size horizontally or vertically
  * 
  * @return the ship on the cursor rotated
  */
-function updateGhostShipSize(shipSize) {
+function updateGhostShipSize() {
     const ghostShip = document.querySelectorAll(".ghost-ship")[0]
     switch (ghostDirection) {
-        case "R" || "L":
-            ghostShip.style.width = `${shipSize * 40}px`
+        case "R":
+        case "L":
+            ghostShip.style.width = `${actualShipSize * 40}px`
             ghostShip.style.height = `40px`
             break;
-        case "U" || "D":
+        case "U":
+        case "D":
             ghostShip.style.width = `40px`
-            ghostShip.style.height = `${shipSize * 40}px`
+            ghostShip.style.height = `${actualShipSize * 40}px`
             break;
     }
 }
