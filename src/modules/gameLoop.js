@@ -23,7 +23,7 @@ export default function startGame() {
     
     // Start the game
     isGameActive = true;
-    gameLoop(); // Inicia el bucle del juego
+    testGame(); // Inicia el bucle del juego
 }
 
 async function gameLoop() {
@@ -133,4 +133,68 @@ function showGhostShip() {
 function removeGhostShips() {
     const ghostShips = document.querySelectorAll(".ghost-ship");
     ghostShips.forEach((ship) => ship.remove());
+}
+
+
+//A test game with predefined boats and same boats on both sides
+async function testGame() {
+    // Create players and gameboards
+    const playerGameboard = new Gameboard();
+    const computerGameboard = new Gameboard();
+    const player = new Player(playerGameboard, computerGameboard);
+    const computer = new PlayerAI(computerGameboard, playerGameboard);
+
+    // Populate gameboards with predetermined ship coordinates
+    const defaultShipsData = [
+        { length: 3, coordinates: [[3, 2], [3, 3], [3, 4]] },
+        { length: 4, coordinates: [[4, 2], [5, 2], [6, 2], [7, 2]] },
+        { length: 4, coordinates: [[8, 2], [8, 3], [8, 4], [8, 5]] },
+        { length: 5, coordinates: [[5, 3], [5, 4], [5, 5], [5, 6], [5, 7]] },
+    ];
+    defaultShipsData.forEach((shipData) => {
+        const ship = new Ship(shipData.length, shipData.coordinates);
+        playerGameboard.placeShip(ship);
+    });
+    defaultShipsData.forEach((shipData) => {
+        const ship = new Ship(shipData.length, shipData.coordinates);
+        computerGameboard.placeShip(ship);
+    });
+
+
+    // Iniciar el juego llamando a la función de inicialización en domInteraction.js
+    initializeGame(playerGameboard, computerGameboard);
+
+
+    // Implement the game loop
+    while (!gameOver() && isGameActive) {
+        // Player's turn
+        let playerAttackCoords = await getPlayerAttackCoordsAsync(); // Wait until attack coordinates are obtained
+        while(!player.isValidMove(playerAttackCoords)) {
+            playerAttackCoords = await getPlayerAttackCoordsAsync();
+        }
+        const playerAttackResult = player.attackEnemy(playerAttackCoords);
+        gameOver()
+
+        // Computer's turn
+        let computerAttackCoords = computer.generateAttack()
+        while(!computer.isValidMove(computerAttackCoords)) {
+            computerAttackCoords = computer.generateAttack()
+        }
+        const computerAttackResult = computer.attackEnemy(computerAttackCoords);
+        // Update UI to reflect the attack result
+        updatePlayerBoard(computerAttackCoords, computerAttackResult, playerGameboard)
+    }
+
+    // Function to check if the game is over
+    function gameOver() {
+        if (computerGameboard.gameLost()) {
+            showMessage("You Win!");
+            return true
+        }
+        if (playerGameboard.gameLost()) {
+            showMessage("You Lose!"); 
+            return true
+        }
+        return false
+    }
 }
