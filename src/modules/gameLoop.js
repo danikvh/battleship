@@ -16,7 +16,6 @@ export default function startGame() {
         // Reinicia el juego y oculta el mensaje
         resetGameboard();
         hideMessage();
-        showGhostShip(5);
 
         // Inicia el bucle de juego
         gameLoop();
@@ -33,6 +32,10 @@ async function gameLoop() {
     const computerGameboard = new Gameboard();
     const player = new Player(playerGameboard, computerGameboard);
     const computer = new PlayerAI(computerGameboard, playerGameboard);
+
+    // Create user ships
+    showGhostShip(5);
+
 
     // Populate gameboards with predetermined ship coordinates
     const defaultShipsData = [
@@ -113,7 +116,7 @@ function resetGameboard() {
 }
 
 // Shows the boat to be added in the cursor
-function showGhostShip(shipSize) {
+async function showGhostShip(shipSize) {
     const shipElement = document.createElement("div");
     shipElement.classList.add("ghost-ship");
     document.body.appendChild(shipElement);
