@@ -6,17 +6,45 @@ import Gameboard from "../factories/Gameboard"
 import Player from "../factories/Player"
 import PlayerAI from "../factories/PlayerAI"
 
-//Variables
-let isGameActive = false;
-let ghostDirection = "U"; // The direction of the ghost ship showed to the player
 
-export default function startGame() {    
+//Variables
+let isGameActive = false; // Determines if a game is being played
+let ghostDirection = "U"; // The direction of the ghost ship showed to the player
+let playerAttackCoords = null; // store the attacked coordinates of the player
+let actualShipSize = 5; // The size of the actual ghost ship being put on the gameboard
+
+
+//// FUNCTIONS ////
+/**
+ * Starts the game
+ * 
+ * @return initializes listeners and starts the game
+ */
+export default function startGame() { 
+    // Listeners
+    // AI Board cell click, attacking a coordinate
+    const aiCells = document.querySelectorAll('#ai-board td');
+    aiCells.forEach(cell => { cell.addEventListener('click', handleAICellClick) });
+    // Start button click listener
+    const startButton = document.getElementById("start-button");
+    startButton.addEventListener("click", resetGame);
+    // Left and right click listeners to rotate ghost ships
+    document.addEventListener("keydown", leftRightArrows);
+    
     // Start the game
-    isGameActive = true;
     gameLoop(); // Inicia el bucle del juego
 }
 
+
+/**
+ * Logic of a game loop
+ * 
+ * @return starts a game
+ */
 async function gameLoop() {
+    // A game is being played
+    isGameActive = true;
+
     // Create players and gameboards
     const playerGameboard = new Gameboard();
     const computerGameboard = new Gameboard();
@@ -81,20 +109,6 @@ async function gameLoop() {
         return false
     }
 }
-
-function showMessage(message) {
-    const messageElement = document.getElementById("message");
-    const messageTextElement = messageElement.querySelector("h3");
-    messageTextElement.textContent = message;
-    messageElement.classList.remove("hidden-message");
-}
-
-function hideMessage() {
-    const messageElement = document.getElementById("message");
-    messageElement.classList.add("hidden-message");
-}
-
-
 
 
 
@@ -163,29 +177,6 @@ async function testGame() {
 
 
 
-
-// DOMINTERACTION.JS
-
-// MAIN CODE //
-
-// Variables
-let playerAttackCoords = null; // store the attacked coordinates of the player
-let actualShipSize = 5; // The size of the actual ghost ship being put on the gameboard
-
-// Listeners
-// AI Board cell click, attacking a coordinate
-const aiCells = document.querySelectorAll('#ai-board td');
-aiCells.forEach(cell => { cell.addEventListener('click', handleAICellClick) });
-// Start button click listener
-const startButton = document.getElementById("start-button");
-startButton.addEventListener("click", resetGame);
-// Left and right click listeners to rotate ghost ships
-document.addEventListener("keydown", leftRightArrows);
-
-
-
-
-//// FUNCTIONS ////
 
 // LISTENER FUNCTIONS //
 /**
@@ -482,3 +473,28 @@ function removeGhostShips() {
     ghostShips.forEach((ship) => ship.remove());
 }
 
+
+
+// VISUALS //
+/**
+ * Shows a text on the message below the gameboards
+ * 
+ * @param {string} message string to show
+ * @return shows the message on the page
+ */
+function showMessage(message) {
+    const messageElement = document.getElementById("message");
+    const messageTextElement = messageElement.querySelector("h3");
+    messageTextElement.textContent = message;
+    messageElement.classList.remove("hidden-message");
+}
+
+/**
+ * Hides the message below the gameboards
+ * 
+ * @return hides the message on the page
+ */
+function hideMessage() {
+    const messageElement = document.getElementById("message");
+    messageElement.classList.add("hidden-message");
+}
