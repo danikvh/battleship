@@ -8,34 +8,12 @@ import PlayerAI from "../factories/PlayerAI"
 
 //Variables
 let isGameActive = false;
-let ghostDirection = "R"; // The direction of the ghost ship showed to the player
+let ghostDirection = "U"; // The direction of the ghost ship showed to the player
 
-export default function startGame() {
-    // Add listener to left and right buttons to rotate the ghost ship showed
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-            console.log("RFD")
-            switch (ghostDirection) {
-                case "R":
-                    ghostDirection = event.key === "ArrowLeft" ? "U" : "D";
-                    break;
-                case "U":
-                    ghostDirection = event.key === "ArrowLeft" ? "L" : "R";
-                    break;
-                case "L":
-                    ghostDirection = event.key === "ArrowLeft" ? "D" : "U";
-                    break;
-                case "D":
-                    ghostDirection = event.key === "ArrowLeft" ? "R" : "L";
-                    break;
-            }
-            console.log(ghostDirection);
-        }
-    });
-    
+export default function startGame() {    
     // Start the game
     isGameActive = true;
-    testGame(); // Inicia el bucle del juego
+    gameLoop(); // Inicia el bucle del juego
 }
 
 async function gameLoop() {
@@ -117,31 +95,7 @@ function hideMessage() {
 }
 
 
-// Shows the boat to be added in the cursor
-async function showGhostShip(shipSize) {
-    const shipElement = document.createElement("div");
-    shipElement.classList.add("ghost-ship");
-    document.body.appendChild(shipElement);
 
-    shipElement.style.width = `${shipSize * 40}px`
-  
-    // Función para dibujar el barco sobre el cursor
-    const drawShipOnCursor = (event) => {
-        const x = event.clientX - 15
-        const y = event.clientY - 15
-        shipElement.style.left = `${x}px`;
-        shipElement.style.top = `${y}px`;
-    };
-  
-    // Evento para detectar el movimiento del ratón
-    document.addEventListener("mousemove", drawShipOnCursor);
-}
-
-// Deletes the ghost ships on the cursor
-function removeGhostShips() {
-    const ghostShips = document.querySelectorAll(".ghost-ship");
-    ghostShips.forEach((ship) => ship.remove());
-}
 
 
 //A test game with predefined boats and same boats on both sides
@@ -224,9 +178,15 @@ aiCells.forEach(cell => { cell.addEventListener('click', handleAICellClick) });
 // Start button click listener
 const startButton = document.getElementById("start-button");
 startButton.addEventListener("click", resetGame);
+// Left and right click listeners to rotate ghost ships
+document.addEventListener("keydown", leftRightArrows);
 
-// FUNCTIONS
 
+
+
+//// FUNCTIONS ////
+
+// LISTENER FUNCTIONS //
 /**
  * Handle AI Board cell click, attacking a coordinate.
  *
@@ -267,6 +227,35 @@ function resetGame(event) {
     //gameLoop();
 }
 
+/**
+ * Add listener to left and right buttons to rotate the ghost ship showed
+ * 
+ * @return a newly started game
+ */
+function leftRightArrows(event) {
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        console.log("RFD")
+        switch (ghostDirection) {
+            case "R":
+                ghostDirection = event.key === "ArrowLeft" ? "U" : "D";
+                break;
+            case "U":
+                ghostDirection = event.key === "ArrowLeft" ? "L" : "R";
+                break;
+            case "L":
+                ghostDirection = event.key === "ArrowLeft" ? "D" : "U";
+                break;
+            case "D":
+                ghostDirection = event.key === "ArrowLeft" ? "R" : "L";
+                break;
+        }
+        console.log(ghostDirection);
+    }
+}
+
+
+
+// BOARD FUNCTIONS //
 /**
  * Render the gameboards on screen
  *
@@ -358,6 +347,10 @@ function resetGameboard() {
     aiBoardContainer.appendChild(document.createElement('tbody'));
 }
 
+
+
+
+// ATTACK FUNCTIONS //
 /**
  * Asynchronously get the player's attack coordinates.
  * 
@@ -403,3 +396,78 @@ function getPlayerAttackCoords() {
 function setPlayerAttackCoords(coords) {
     playerAttackCoords = coords; // Almacena las coordenadas de ataque del jugador en la variable playerAttackCoords
 }
+
+
+
+// GHOST SHIP FUNCTIONS //
+/**
+ * Shows the boat to be added in the cursor
+ * 
+ * @param {number} shipSize The size of the ship added
+ */
+async function showGhostShip(shipSize) {
+    const shipElement = document.createElement("div");
+    shipElement.classList.add("ghost-ship");
+    document.body.appendChild(shipElement);
+
+    // Reset the ghost ship direction
+    ghostDirection = "R"
+    shipElement.style.width = `${shipSize * 40}px`
+  
+    // Evento para detectar el movimiento del ratón
+    document.addEventListener("mousemove", (event) => {
+        drawShipOnCursor(event, shipElement)});
+}
+
+/**
+ * Draws the ship on the cursor
+ * 
+ * @param {HTMLElement} shipElement the ghost ship HTML visual
+ * @return the ship on the cursor
+ */
+// Función para dibujar el barco sobre el cursor
+function drawShipOnCursor (event, shipElement) {
+    let x = event.clientX - 15
+    let y = event.clientY - 15
+    switch (ghostDirection) {
+        case "R" || "U":
+            x = event.clientX - 15
+            y = event.clientY - 15
+            break;
+        case "L":
+            ghostDirection = event.key === "ArrowLeft" ? "D" : "U";
+            break;
+        case "D":
+            ghostDirection = event.key === "ArrowLeft" ? "R" : "L";
+            break;
+    }
+
+    shipElement.style.left = `${x}px`;
+    shipElement.style.top = `${y}px`;
+};
+
+/**
+ * Rotates the ghost ship accordingly
+ * 
+ * @return the ship on the cursor rotated
+ */
+function updateGhostShipSize(shipSize) {
+    const ghostShip = document.querySelectorAll(".ghost-ship")[0]
+    switch (ghostDirection) {
+        case "R" || "L":
+            ghostShip.style.width = `${shipSize * 40}px`
+            ghostShip.style.height = `40px`
+            break;
+        case "U" || "D":
+            ghostShip.style.width = `40px`
+            ghostShip.style.height = `${shipSize * 40}px`
+            break;
+    }
+}
+
+// Deletes the ghost ships on the cursor
+function removeGhostShips() {
+    const ghostShips = document.querySelectorAll(".ghost-ship");
+    ghostShips.forEach((ship) => ship.remove());
+}
+
