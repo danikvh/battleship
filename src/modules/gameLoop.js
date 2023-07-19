@@ -78,7 +78,7 @@ async function gameLoop() {
 
 
     // Iniciar el juego llamando a la función de inicialización en domInteraction.js
-    initializeGame(playerGameboard, computerGameboard);
+    renderBoards(playerGameboard, computerGameboard);
 
 
     // Implement the game loop
@@ -191,7 +191,7 @@ async function testGame() {
 
 
     // Iniciar el juego llamando a la función de inicialización en domInteraction.js
-    initializeGame(playerGameboard, computerGameboard);
+    renderBoards(playerGameboard, computerGameboard);
 
 
     // Implement the game loop
@@ -233,29 +233,50 @@ async function testGame() {
 
 // DOMINTERACTION.JS
 
-// LISTENERS //
+// MAIN CODE //
+
+// Variables
+let playerAttackCoords = null; // store the attacked coordinates of the player
+
+// Listeners
 // AI Board cell click, attacking a coordinate
 const aiCells = document.querySelectorAll('#ai-board td');
-aiCells.forEach(cell => {
-    cell.addEventListener('click', () => {
-        // Failed shot
-        if (cell.classList.contains('water'))  {
-            cell.style.backgroundColor = '#0759b6'
-        }
-        // Succesful shot
-        cell.classList.remove('hidden'); // Remueve la clase 'hidden' al hacer clic en una celda de la IA
-        const row = cell.parentNode.rowIndex;
-        const col = cell.cellIndex;
-        const attackCoords = [row, col];
-        setPlayerAttackCoords(attackCoords); // Almacena las coordenadas de ataque del jugador
-    });
-});
+aiCells.forEach(cell => { cell.addEventListener('click', handleAICellClick) });
 
 
+// FUNCTIONS
 
-let playerAttackCoords = null; // Variable para almacenar las coordenadas de ataque del jugador
+/**
+ * Handle AI Board cell click, attacking a coordinate.
+ *
+ * @param {Event} event The click event object.
+ */
+function handleAICellClick(event) {
+    const cell = event.target;
 
-function initializeGame(playerGameboard, computerGameboard) {
+    // Failed shot
+    if (cell.classList.contains('water')) {
+        cell.style.backgroundColor = '#0759b6';
+    }
+
+    // Successful shot
+    cell.classList.remove('hidden');
+    
+    // Obtain the coords and shoot
+    const row = cell.parentNode.rowIndex;
+    const col = cell.cellIndex;
+    const attackCoords = [row, col];
+    setPlayerAttackCoords(attackCoords); // Almacena las coordenadas de ataque del jugador
+}
+
+/**
+ * Render the gameboards on screen
+ *
+ * @param {Gameboard} playerGameboard The player's Gameboard object
+ * @param {Gameboard} computerGameboard The AI's Gameboard object
+ * @return the gameboard elements from the HTML with the cells rendered
+ */
+function renderBoards(playerGameboard, computerGameboard) {
     // Render the gameboards on the UI
     // Generar la representación del tablero para el jugador
     const playerBoard = document.getElementById("player-board");
@@ -264,32 +285,24 @@ function initializeGame(playerGameboard, computerGameboard) {
     // Generar la representación del tablero para la IA
     const aiBoard = document.getElementById("ai-board");
     generateGameboardHTML(aiBoard, computerGameboard);
-
-
-    // Agrega el evento de clic a las celdas del tablero de la IA
-    const aiCells = document.querySelectorAll('#ai-board td');
-    aiCells.forEach(cell => {
-        cell.addEventListener('click', () => {
-            if (cell.classList.contains('water'))  {
-                cell.style.backgroundColor = '#0759b6'
-            }
-            cell.classList.remove('hidden'); // Remueve la clase 'hidden' al hacer clic en una celda de la IA
-            const row = cell.parentNode.rowIndex;
-            const col = cell.cellIndex;
-            const attackCoords = [row, col];
-            setPlayerAttackCoords(attackCoords); // Almacena las coordenadas de ataque del jugador
-        });
-    });
 }
 
-// Function to generate the gameboard HTML
+/**
+ * Given a completed Gameboard (with Ships in it), generates the HTML table associated to it
+ *
+ * @param {HTMLElement} boardElement The HTML table associated to the gameboard
+ * @param {Gameboard} gameboard The Gameboar object containing the initial state with ships of the board
+ * @return the HTML render of the gameboard
+ */
 function generateGameboardHTML(boardElement, gameboard) {
     const shipColors = ['#111111', '#222222', '#333333', '#444444', '#555555'];
 
     for (let i = 0; i < 10; i++) {
         const row = document.createElement('tr');
+        
         for (let j = 0; j < 10; j++) {
             const cell = document.createElement('td');
+
             // Check if the cell has a ship and set the appropriate CSS class
             if (gameboard.board[i][j].hasShip) {
                 const shipIndex = gameboard.getShipPosition([i,j])
@@ -298,6 +311,7 @@ function generateGameboardHTML(boardElement, gameboard) {
             } else {
                 cell.classList.add('water');
             }
+
             // Add specific class for AI cells
             if (boardElement.id === 'ai-board') {
                 cell.classList.add('hidden');
