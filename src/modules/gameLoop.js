@@ -98,7 +98,7 @@ async function gameLoop() {
         }
         const computerAttackResult = computer.attackEnemy(computerAttackCoords);
         // Update UI to reflect the attack result
-        updatePlayerBoard(computerAttackCoords, computerAttackResult, playerGameboard)
+        updatePlayerBoard(computerAttackCoords, computerAttackResult)
     }
 
     // Function to check if the game is over
@@ -211,7 +211,7 @@ async function testGame() {
         }
         const computerAttackResult = computer.attackEnemy(computerAttackCoords);
         // Update UI to reflect the attack result
-        updatePlayerBoard(computerAttackCoords, computerAttackResult, playerGameboard)
+        updatePlayerBoard(computerAttackCoords, computerAttackResult)
     }
 
     // Function to check if the game is over
@@ -287,6 +287,7 @@ function renderBoards(playerGameboard, computerGameboard) {
     generateGameboardHTML(aiBoard, computerGameboard);
 }
 
+// COULD BE MOVED TO DOMINTERACTION.JS
 /**
  * Given a completed Gameboard (with Ships in it), generates the HTML table associated to it
  *
@@ -299,7 +300,7 @@ function generateGameboardHTML(boardElement, gameboard) {
 
     for (let i = 0; i < 10; i++) {
         const row = document.createElement('tr');
-        
+
         for (let j = 0; j < 10; j++) {
             const cell = document.createElement('td');
 
@@ -322,11 +323,20 @@ function generateGameboardHTML(boardElement, gameboard) {
     }
 }
 
-export function updatePlayerBoard(cellCoords, result, board) {
+/**
+ * Given an attack, updates the HTML render of the Gameboard
+ *
+ * @param {number[]} cellCoords The coordinates attacked
+ * @param {string} result The attack to cellCoords was a Hit or No hit
+ * @return the updated HTML render of the Gameboard attack
+ */
+function updatePlayerBoard(cellCoords, result) {
     const [row, col] = cellCoords;
     const cells = document.querySelectorAll('#player-board td');
-    const cellIndex = row * 10 + col;
+    const cellIndex = row * 10 + col; // Obtain the relative position on the table (1 dimension)
     const cell = cells[cellIndex];
+
+    // Paint the cell as a hit or a failed hit
     if (result === 'Hit') {
         cell.style.backgroundColor = 'red'; // Actualizar celda a color rojo en caso de impacto en un barco
     } else if (result === 'No hit') {
@@ -334,8 +344,18 @@ export function updatePlayerBoard(cellCoords, result, board) {
     }
 }
 
-
-export function getPlayerAttackCoordsAsync() {
+/**
+ * Asynchronously get the player's attack coordinates.
+ * 
+ * This function returns a Promise that resolves once the player's attack coordinates
+ * have been obtained. It repeatedly checks for the attack coordinates every 100 ms
+ * until they are available.
+ * 
+ * @return {Promise<Array<number> | null>} A Promise that resolves with an array
+ *     containing the player's attack coordinates [row, col], or null if the attack
+ *     coordinates are not yet available.
+ */
+function getPlayerAttackCoordsAsync() {
     return new Promise(resolve => {
         const interval = setInterval(() => {
             const playerAttackCoords = getPlayerAttackCoords();
@@ -347,12 +367,25 @@ export function getPlayerAttackCoordsAsync() {
     });
 }
 
+/**
+ * This function retrieves the player's attack coordinates that were stored previously
+ * in the variable playerAttackCoords. It then sets playerAttackCoords to null, clearing
+ * the stored coordinates for the next attack.
+ * 
+ * @return {number[] | null} An array containing the player's attack coordinates
+ *     [row, col], or null if the attack coordinates have not been set yet.
+ */
 function getPlayerAttackCoords() {
     let aux = playerAttackCoords
     playerAttackCoords = null
     return aux; // Devuelve las coordenadas de ataque del jugador almacenadas previamente
 }
 
+/**
+ * Set the player's attack coordinates.
+ * 
+ * @param {number[]} coords An array containing the player's attack coordinates in the format [row, col].
+ */
 function setPlayerAttackCoords(coords) {
     playerAttackCoords = coords; // Almacena las coordenadas de ataque del jugador en la variable playerAttackCoords
 }
