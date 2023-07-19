@@ -20,6 +20,28 @@ export default function startGame() {
         // Inicia el bucle de juego
         gameLoop();
     });
+
+    // Add listener to left and right buttons to rotate the ghost ship showed
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            console.log("RFD")
+            switch (ghostDirection) {
+                case "R":
+                    ghostDirection = event.key === "ArrowLeft" ? "U" : "D";
+                    break;
+                case "U":
+                    ghostDirection = event.key === "ArrowLeft" ? "L" : "R";
+                    break;
+                case "L":
+                    ghostDirection = event.key === "ArrowLeft" ? "D" : "U";
+                    break;
+                case "D":
+                    ghostDirection = event.key === "ArrowLeft" ? "R" : "L";
+                    break;
+            }
+            console.log(ghostDirection);
+        }
+    });
     
     // Start the game
     isGameActive = true;
