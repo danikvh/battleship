@@ -75,6 +75,19 @@ td {
     background-color: #c7e1ff;
 }
 
+.ghost-ship {
+    width: 30px;
+    height: 30px;
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    pointer-events: none; /* Para que el elemento no afecte a otros eventos del ratón */
+    opacity: 0.5; /* Para hacerlo más transparente */
+}
+
 .hidden-message {
     display: none;
 }

@@ -15,11 +15,12 @@ export default function startGame() {
         // Reinicia el juego y oculta el mensaje
         resetGameboard();
         hideMessage();
+        showGhostShip();
 
         // Inicia el bucle de juego
         gameLoop();
     });
-
+    
     // Start the game
     isGameActive = true;
     gameLoop(); // Inicia el bucle del juego
@@ -108,4 +109,28 @@ function resetGameboard() {
     playerBoardContainer.appendChild(document.createElement('tbody'));
     aiBoardContainer.innerHTML = '';
     aiBoardContainer.appendChild(document.createElement('tbody'));
+}
+
+// Shows the boat to be added in the cursor
+function showGhostShip() {
+    const shipElement = document.createElement("div");
+    shipElement.classList.add("ghost-ship");
+    document.body.appendChild(shipElement);
+  
+    // Función para dibujar el barco sobre el cursor
+    const drawShipOnCursor = (event) => {
+        const x = event.clientX - 15
+        const y = event.clientY - 15
+        shipElement.style.left = `${x}px`;
+        shipElement.style.top = `${y}px`;
+    };
+  
+    // Evento para detectar el movimiento del ratón
+    document.addEventListener("mousemove", drawShipOnCursor);
+}
+
+// Deletes the ghost ships on the cursor
+function removeGhostShips() {
+    const ghostShips = document.querySelectorAll(".ghost-ship");
+    ghostShips.forEach((ship) => ship.remove());
 }
