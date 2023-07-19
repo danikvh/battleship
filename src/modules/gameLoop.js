@@ -11,17 +11,6 @@ let isGameActive = false;
 let ghostDirection = "R"; // The direction of the ghost ship showed to the player
 
 export default function startGame() {
-    // Add listener to start button
-    const startButton = document.getElementById("start-button");
-    startButton.addEventListener("click", () => {
-        // Reinicia el juego y oculta el mensaje
-        resetGameboard();
-        hideMessage();
-
-        // Inicia el bucle de juego
-        gameLoop();
-    });
-
     // Add listener to left and right buttons to rotate the ghost ship showed
     document.addEventListener("keydown", (event) => {
         if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
@@ -127,16 +116,6 @@ function hideMessage() {
     messageElement.classList.add("hidden-message");
 }
 
-function resetGameboard() {
-    const playerBoardContainer = document.getElementById("player-board");
-    const aiBoardContainer = document.getElementById('ai-board');
-
-    // Elimina las gameboards existentes si las hay
-    playerBoardContainer.innerHTML = '';
-    playerBoardContainer.appendChild(document.createElement('tbody'));
-    aiBoardContainer.innerHTML = '';
-    aiBoardContainer.appendChild(document.createElement('tbody'));
-}
 
 // Shows the boat to be added in the cursor
 async function showGhostShip(shipSize) {
@@ -242,7 +221,9 @@ let playerAttackCoords = null; // store the attacked coordinates of the player
 // AI Board cell click, attacking a coordinate
 const aiCells = document.querySelectorAll('#ai-board td');
 aiCells.forEach(cell => { cell.addEventListener('click', handleAICellClick) });
-
+// Start button click listener
+const startButton = document.getElementById("start-button");
+startButton.addEventListener("click", resetGame);
 
 // FUNCTIONS
 
@@ -267,6 +248,23 @@ function handleAICellClick(event) {
     const col = cell.cellIndex;
     const attackCoords = [row, col];
     setPlayerAttackCoords(attackCoords); // Almacena las coordenadas de ataque del jugador
+}
+
+/**
+ * Resets a game
+ *
+ * Leaves the gameboards renders blank and starts a new game loop
+ * 
+ * @return a newly started game
+ */
+function resetGame(event) {
+    // Reinicia el juego y oculta el mensaje
+    resetGameboard();
+    renderBoards(new Gameboard(), new Gameboard()); // Blank Gameboard objects to render empty gameboards
+    hideMessage();
+
+    // Inicia el bucle de juego
+    //gameLoop();
 }
 
 /**
@@ -342,6 +340,22 @@ function updatePlayerBoard(cellCoords, result) {
     } else if (result === 'No hit') {
         cell.style.backgroundColor = '#0759b6'; // Actualizar celda a color gris en caso de impacto en el agua
     }
+}
+
+/**
+ * Resets the gameboards HTML renders
+ * 
+ * @return the gameboard HTML elements with no elements/children on them
+ */
+function resetGameboard() {
+    const playerBoardContainer = document.getElementById("player-board");
+    const aiBoardContainer = document.getElementById('ai-board');
+
+    // Elimina las gameboards existentes si las hay
+    playerBoardContainer.innerHTML = '';
+    playerBoardContainer.appendChild(document.createElement('tbody'));
+    aiBoardContainer.innerHTML = '';
+    aiBoardContainer.appendChild(document.createElement('tbody'));
 }
 
 /**
