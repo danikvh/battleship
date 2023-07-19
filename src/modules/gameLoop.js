@@ -7,6 +7,7 @@ import { initializeGame, getPlayerAttackCoordsAsync, updatePlayerBoard } from ".
 
 //Variables
 let isGameActive = false;
+let ghostDirection = "R"; // The direction of the ghost ship showed to the player
 
 export default function startGame() {
     // Add listener to start button
@@ -15,7 +16,7 @@ export default function startGame() {
         // Reinicia el juego y oculta el mensaje
         resetGameboard();
         hideMessage();
-        showGhostShip();
+        showGhostShip(5);
 
         // Inicia el bucle de juego
         gameLoop();
@@ -112,10 +113,12 @@ function resetGameboard() {
 }
 
 // Shows the boat to be added in the cursor
-function showGhostShip() {
+function showGhostShip(shipSize) {
     const shipElement = document.createElement("div");
     shipElement.classList.add("ghost-ship");
     document.body.appendChild(shipElement);
+
+    shipElement.style.width = `${shipSize * 40}px`
   
     // Función para dibujar el barco sobre el cursor
     const drawShipOnCursor = (event) => {
