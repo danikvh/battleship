@@ -22,9 +22,6 @@ let actualShipSize = 5; // The size of the actual ghost ship being put on the ga
  */
 export default function startGame() { 
     // Listeners
-    // AI Board cell click, attacking a coordinate
-    const aiCells = document.querySelectorAll('#ai-board td');
-    aiCells.forEach(cell => { cell.addEventListener('click', handleAICellClick) });
     // Start button click listener
     const startButton = document.getElementById("start-button");
     startButton.addEventListener("click", resetGame);
@@ -55,10 +52,14 @@ async function gameLoop() {
     renderBoards(playerGameboard, computerGameboard);
 
     // Create user ships
-    let coord = await showGhostShip(5);
-    console.log(coord)
+    const shipSizes = [5, 4, 4, 3];
+    for (const shipSize of shipSizes) {
+        let coord = await showGhostShip(shipSize);
+        playerGameboard.placeShip(createShip(coord));
+        renderBoards(playerGameboard, computerGameboard);
+    }
 
-    // Populate gameboards with predetermined ship coordinates
+    // Populate AI gameboard with predetermined ship coordinates
     const defaultShipsData = [
         { length: 3, coordinates: [[3, 2], [3, 3], [3, 4]] },
         { length: 4, coordinates: [[4, 2], [5, 2], [6, 2], [7, 2]] },
@@ -67,17 +68,11 @@ async function gameLoop() {
     ];
     defaultShipsData.forEach((shipData) => {
         const ship = new Ship(shipData.length, shipData.coordinates);
-        playerGameboard.placeShip(ship);
-    });
-    defaultShipsData.forEach((shipData) => {
-        const ship = new Ship(shipData.length, shipData.coordinates);
         computerGameboard.placeShip(ship);
     });
 
-
     // Iniciar el juego llamando a la función de inicialización en domInteraction.js
     renderBoards(playerGameboard, computerGameboard);
-
 
     // Implement the game loop
     while (!gameOver() && isGameActive) {
@@ -214,12 +209,11 @@ function handleAICellClick(event) {
  */
 function resetGame(event) {
     // Reinicia el juego y oculta el mensaje
-    resetGameboard();
     renderBoards(new Gameboard(), new Gameboard()); // Blank Gameboard objects to render empty gameboards
     hideMessage();
 
     // Inicia el bucle de juego
-    //gameLoop();
+    gameLoop();
 }
 
 /**
@@ -259,6 +253,9 @@ function leftRightArrows(event) {
  * @return the gameboard elements from the HTML with the cells rendered
  */
 function renderBoards(playerGameboard, computerGameboard) {
+    // Reset the HTML gameboards in case they have something
+    resetGameboard()
+
     // Render the gameboards on the UI
     // Generar la representación del tablero para el jugador
     const playerBoard = document.getElementById("player-board");
@@ -267,9 +264,13 @@ function renderBoards(playerGameboard, computerGameboard) {
     // Generar la representación del tablero para la IA
     const aiBoard = document.getElementById("ai-board");
     generateGameboardHTML(aiBoard, computerGameboard);
+
+    // Enables attacks on the enemy gameboard (listener on the cells)
+    // AI Board cell click, attacking a coordinate
+    const aiCells = document.querySelectorAll('#ai-board td');
+    aiCells.forEach(cell => { cell.addEventListener('click', handleAICellClick) });
 }
 
-// COULD BE MOVED TO DOMINTERACTION.JS
 /**
  * Given a completed Gameboard (with Ships in it), generates the HTML table associated to it
  *
@@ -401,14 +402,14 @@ function setPlayerAttackCoords(coords) {
  * @param {number} shipSize The size of the ship added
  */
 async function showGhostShip(shipSize) {
-    actualShipSize = shipSize // Update for the rotate function
+    // Reset the ghost ship direction and set the ship size for the rotation
+    ghostDirection = "R"
+    actualShipSize = shipSize 
 
     const shipElement = document.createElement("div");
     shipElement.classList.add("ghost-ship");
     document.body.appendChild(shipElement);
 
-    // Reset the ghost ship direction
-    ghostDirection = "R"
     shipElement.style.width = `${shipSize * 40}px`
   
     // Evento para detectar el movimiento del ratón
@@ -416,6 +417,7 @@ async function showGhostShip(shipSize) {
         drawShipOnCursor(event, shipElement)});
 
     let coords = await clickGameboard();
+    removeGhostShips(); // Remove the ghost ship HTML object
     return coords
 }
 
@@ -473,12 +475,6 @@ function updateGhostShipSize() {
     }
 }
 
-// Deletes the ghost ships on the cursor
-function removeGhostShips() {
-    const ghostShips = document.querySelectorAll(".ghost-ship");
-    ghostShips.forEach((ship) => ship.remove());
-}
-
 /**
  * The player click his gameboard and a ship is positioned on the player gameboard
  * 
@@ -498,6 +494,46 @@ async function clickGameboard() {
             cell.addEventListener("click", clickListener, { once: true });
         });
     });
+}
+
+/**
+ * Creates a ship given the coordinates, rotation, and size
+ * 
+ * @return {Ship} returns a Ship object
+ */
+function createShip(coord) {
+    const [row, col] = coord;
+    let coords = []
+    switch (ghostDirection) {
+        case "R":
+            for (let i = 0; i < actualShipSize; i++) {
+                coords.push([row, col+i])
+            }
+            break;
+        case "L":
+            for (let i = 0; i < actualShipSize; i++) {
+                coords.push([row, col-i])
+            }
+            break;
+        case "U":
+            for (let i = 0; i < actualShipSize; i++) {
+                coords.push([row+i, col])
+            }
+            break;
+        case "D":
+            for (let i = 0; i < actualShipSize; i++) {
+                coords.push([row+i, col])
+            }
+            break;
+    }
+    console.log(coords)
+    return new Ship(actualShipSize, coords);
+}
+
+// Deletes the ghost ships on the cursor
+function removeGhostShips() {
+    const ghostShips = document.querySelectorAll(".ghost-ship");
+    ghostShips.forEach((ship) => ship.remove());
 }
 
 
