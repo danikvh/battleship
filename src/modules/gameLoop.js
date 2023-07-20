@@ -522,7 +522,7 @@ function createShip(coord) {
             break;
         case "D":
             for (let i = 0; i < actualShipSize; i++) {
-                coords.push([row+i, col])
+                coords.push([row-i, col])
             }
             break;
     }
