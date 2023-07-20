@@ -51,9 +51,12 @@ async function gameLoop() {
     const player = new Player(playerGameboard, computerGameboard);
     const computer = new PlayerAI(computerGameboard, playerGameboard);
 
-    // Create user ships
-    showGhostShip(5);
+    // Render the empty boards
+    renderBoards(playerGameboard, computerGameboard);
 
+    // Create user ships
+    let coord = await showGhostShip(5);
+    console.log(coord)
 
     // Populate gameboards with predetermined ship coordinates
     const defaultShipsData = [
@@ -411,6 +414,9 @@ async function showGhostShip(shipSize) {
     // Evento para detectar el movimiento del ratón
     document.addEventListener("mousemove", (event) => {
         drawShipOnCursor(event, shipElement)});
+
+    let coords = await clickGameboard();
+    return coords
 }
 
 /**
@@ -473,6 +479,26 @@ function removeGhostShips() {
     ghostShips.forEach((ship) => ship.remove());
 }
 
+/**
+ * The player click his gameboard and a ship is positioned on the player gameboard
+ * 
+ * @return {Array} [row, col] The coordinates of the selected cell
+ */
+async function clickGameboard() {
+    return new Promise((resolve) => {
+        const playerBoardCells = document.querySelectorAll("#player-board td");
+        const clickListener = (event) => {
+            const cell = event.target;
+            const row = cell.parentNode.rowIndex;
+            const col = cell.cellIndex;
+            resolve([row, col]);
+        };
+    
+        playerBoardCells.forEach((cell) => {
+            cell.addEventListener("click", clickListener, { once: true });
+        });
+    });
+}
 
 
 // VISUALS //
